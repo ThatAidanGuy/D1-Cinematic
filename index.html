@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greedy Skies Cinematic</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.60.0/phaser.js" integrity="sha512-H05oT7BAjM9Ai1IaFX9zr61NtE2e1P0MkTz3AZXBnseaJSAOt2FGMFJ+vVGutaJxEGA1jxUiYsTBYQNE08/Erw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        class Scene1 extends Phaser.Scene { //I believe each scene is done like this
+            constructor() {
+                super('scene1');
+            }
+
+            preload() {
+                this.load.image('reppo', 'files/Drawing.png');
+                this.load.audio('voice', 'files/RG_VoiceClip.mp3');
+            }
+            create() {
+                let logoCircle = this.add.circle(325,225,150,"0xffff00"); //yellow circle
+                let reppo = this.add.image(355,235,'reppo'); //reppo games "logo"
+                reppo.setScale(0.15); //change logo size to be reasonable
+                this.add.tween({ //make circle fade in
+                        targets: logoCircle,
+                        duration: 2000,
+                        alpha: {from: 0, to: 1} //this means fade in!
+                });
+                this.add.tween({ //make logo fade in
+                        targets: reppo,
+                        duration: 1250, //logo is super thin anyway so fade it in faster
+                        alpha: {from: 0, to: 1}
+                });
+
+                let voice = this.sound.add('voice'); //play audio
+                voice.play();
+
+                this.time.addEvent({
+                    delay: 4000,
+                    loop: false,
+                    callback: () => {
+                        this.scene.start("scene2");
+                    }
+                });
+            }
+        }
+
+        class Scene2 extends Phaser.Scene {
+            constructor() {
+                super('scene2');
+            }
+
+            preload() {
+                this.load.image('reppo', 'files/Drawing.png');
+                this.load.image('flyer', 'files/flyer2.gif');
+                this.load.audio('buzzing', 'files/Buzzing.mp3');
+            }
+
+            create() {
+                //variable/trait declaration
+                let logoCircle = this.add.circle(325,225,150,"0xffff00"); //yellow circle
+                let reppo = this.add.image(355,235,'reppo'); //reppo games "logo"
+                reppo.setScale(0.15); //change logo size to be reasonable
+                let cloudCircle1 = this.add.circle(325,225,150,"0xffffff"); //white circle
+                cloudCircle1.alpha = 0;
+                let cloudCircle2 = this.add.circle(800,225,150,"0xffffff"); //white circle
+                let blueSky = this.add.rectangle(0,0,6400,4800, "0x00aaff");
+                blueSky.alpha = 0;
+                let flyer = this.add.image(800,225,'flyer'); //greedy skies flyer
+                flyer.setScale(2); //change flyer size
+                flyer.setAngle(359); //change flyer angle
+
+                this.add.tween({ //make cloudCircle1 fade in over yellow+logo
+                    targets: cloudCircle1,
+                    duration: 2000,
+                    alpha: {from: 0, to: 1}
+                });
+
+                this.add.tween ({ //move cloudCircle2 in from right
+                    delay: 2000,
+                    targets: cloudCircle2,
+                    x: 425,
+                    y: 275,
+                    duration: 1000
+                });
+
+                this.add.tween({ //move everything offscreen
+                    delay: 4000,
+                    targets: [cloudCircle1, cloudCircle2, logoCircle, reppo],
+                    duration: 1000,
+                    y: -400
+                });
+
+                this.add.tween({ //fade in blue background
+                    delay: 5000,
+                    targets: blueSky,
+                    duration: 1000,
+                    alpha: {from: 0, to: 1}
+                });
+
+                let buzzing = this.sound.add('buzzing');
+                buzzing.play();
+                /*this.add.tween({ //play buzzing sound for duration
+                            targets: buzzing,
+                            volume: {from: 0, to: 1},
+                            duration: 500,
+                            ease: Phaser.Math.Easing.Expo.In,
+                            onStart: () => polyrhythmSound.play()
+                        });*/
+
+                this.add.tween({ //move flyer all the way across from right
+                    delay: 5000,
+                    targets: flyer,
+                    x: -100,
+                    duration: 2000
+                });
+
+                this.time.addEvent({
+                    delay: 7000,
+                    loop: false,
+                    callback: () => {
+                        this.scene.start("scene3");
+                    }
+                });
+
+
+            }
+        }
+
+        class Scene3 extends Phaser.Scene {
+            constructor() {
+                super('scene3');
+            }
+
+            preload() {
+                this.load.image('flyer', 'files/flyer2.gif');
+                this.load.image('title', 'files/title_logo.gif');
+                this.load.image('speech', 'files/speech_bubble.png')
+            }
+
+            create() {
+                //variable declaration
+                let blueSky = this.add.rectangle(0,0,6400,4800, "0x00aaff");
+                let title = this.add.image(200, -200, 'title');
+                title.setScale(0.8);
+                let blackMenu = this.add.rectangle(1550,400,500,1000, "0x000000");
+                blackMenu.setAngle(15);
+                let text1 = this.add.text(1380,100, "Insert Coin");
+                let text2 = this.add.text(1360,200, "How to Play");
+                let text3 = this.add.text(1340,300, "Options");
+                let text4 = this.add.text(1320,400, "Credits");
+                let flyer = this.add.image(100,600, 'flyer');
+                flyer.setScale(2); //change flyer size
+                flyer.setAngle(359); //change flyer angle
+                let speech = this.add.image(240,350, 'speech');
+                speech.setScale(0.4);
+                speech.alpha = 0;
+        
+
+                //More details for the text.
+                //Since there's just 4 I did it manually instead of via loops.
+                text1.setFontSize(35); //x=380
+                text2.setFontSize(35); //x=360
+                text3.setFontSize(35); //x=340
+                text4.setFontSize(35); //x=320
+
+                //title comes down
+                this.add.tween({
+                    targets: title,
+                    y: 200,
+                    duration: 3000
+                });
+
+                //black menu enters frame
+                this.add.tween({
+                    delay: 3000,
+                    targets: blackMenu,
+                    x: 550,
+                    duration: 500
+                });
+
+                //text zooms in
+                this.add.tween({
+                    delay: 3500,
+                    targets: text1,
+                    x: 380,
+                    duration: 500
+                });
+                this.add.tween({
+                    delay: 4000,
+                    targets: text2,
+                    x: 360,
+                    duration: 500
+                });
+                this.add.tween({
+                    delay: 4500,
+                    targets: text3,
+                    x: 340,
+                    duration: 500
+                });
+                this.add.tween({
+                    delay: 5000,
+                    targets: text4,
+                    x: 320,
+                    duration: 500
+                });
+
+                //flyer pops up
+                this.add.tween({
+                    delay: 5500,
+                    targets: flyer,
+                    y: 400,
+                    duration: 500
+                });
+
+                //speech bubble appears
+                this.add.tween({
+                    delay: 6000,
+                    targets: speech,
+                    alpha: 1,
+                    duration: 1
+                })
+
+                //text appears
+                let text5 = this.add.text(192, 1305, 'Grab clocks \nto extend \nthe timer!', {
+                    color: "0xffffff",
+                    lineSpacing: 9
+                });
+
+                this.add.tween({
+                    delay: 6000,
+                    targets: text5,
+                    y: 305,
+                    duration: 1
+                });
+
+                this.time.addEvent({
+                    delay: 8000,
+                    loop: false,
+                    callback: () => {
+                        this.cameras.main.fade(2000, 0);
+                    }
+                });
+
+            }
+        }
+
+        new Phaser.Game({
+            width: 640,
+            height: 480,
+            scene: [Scene1, Scene2, Scene3],
+        });
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>
